@@ -1,0 +1,20 @@
+from .reglas import ReglaNegocio
+
+
+class ExcepcionDominio(Exception):
+    ...
+
+
+class ReglaNegocioExcepcion(ExcepcionDominio):
+    def __init__(self, regla: ReglaNegocio):
+        self.regla = regla
+
+    def __str__(self):
+        return str(self.regla)
+
+
+class ExcepcionFabrica(ExcepcionDominio):
+    def __init__(self, mensaje):
+        self.__mensaje = mensaje
+    def __str__(self):
+        return str(self.__mensaje)

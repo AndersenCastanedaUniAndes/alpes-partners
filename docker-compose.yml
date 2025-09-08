@@ -1,0 +1,20 @@
+version: '3.9'
+
+services:
+  alpes-partners:
+    build: .
+    container_name: alpes-partners
+    ports:
+      - "8000:8000"
+    environment:
+      - BROKER_HOST=pulsar
+    depends_on:
+      - pulsar
+
+  pulsar:
+    image: apachepulsar/pulsar:latest
+    container_name: pulsar
+    command: bin/pulsar standalone
+    ports:
+      - "6650:6650"
+      - "8080:8080"

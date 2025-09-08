@@ -1,0 +1,6 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+PyDispatcher==2.0.6
+sqlmodel==0.0.24
+pulsar-client==3.7.0
+pulsar-client[avro]==3.7.0
