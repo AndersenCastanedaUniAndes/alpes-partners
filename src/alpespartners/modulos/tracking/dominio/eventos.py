@@ -15,11 +15,9 @@ class ImpresionRegistrada(EventoDominio):
     tipo_evento: str
     metadatos: Metadatos
     timestamp: datetime
-    fecha_creacion: datetime = None
 
     def __post_init__(self):
-        if self.fecha_creacion is None:
-            self.fecha_creacion = datetime.now()
+        super().__post_init__()
 
 
 @dataclass
@@ -32,8 +30,6 @@ class ConversionRegistrada(EventoDominio):
     valor: ValorConversion
     metadatos: Metadatos
     timestamp: datetime
-    fecha_creacion: datetime = None
 
     def __post_init__(self):
-        if self.fecha_creacion is None:
-            self.fecha_creacion = datetime.now()
+        super().__post_init__()

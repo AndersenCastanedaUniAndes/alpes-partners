@@ -4,6 +4,8 @@ from pulsar.schema import *
 from alpespartners.modulos.tracking.infraestructura.schema.v1.comandos import ComandoRegistrarImpresion, ComandoRegistrarConversion
 from alpespartners.modulos.tracking.infraestructura.schema.v1.eventos import EventoImpresionRegistrada, EventoConversionRegistrada
 from alpespartners.modulos.tracking.infraestructura.repositorios import RepositorioImpresionesInMemory, RepositorioConversionesInMemory
+from alpespartners.modulos.tracking.infraestructura.event_store import EventStore, EventStoreRepository
+from alpespartners.modulos.tracking.infraestructura.projections import ProjectionManager
 from alpespartners.modulos.tracking.aplicacion.handlers import RegistrarImpresionHandler, RegistrarConversionHandler
 from alpespartners.modulos.tracking.aplicacion.comandos.registrar_impresion import RegistrarImpresion
 from alpespartners.modulos.tracking.aplicacion.comandos.registrar_conversion import RegistrarConversion
@@ -18,6 +20,11 @@ class ConsumidorComandos:
         self.pulsar_client = pulsar.Client(f'pulsar://{self.broker_host}:6650')
         self.repo_impresiones = RepositorioImpresionesInMemory()
         self.repo_conversiones = RepositorioConversionesInMemory()
+        
+        # Nueva topología híbrida
+        self.event_store = EventStore()
+        self.event_store_repo = EventStoreRepository(self.event_store)
+        self.projection_manager = ProjectionManager()
 
     def suscribirse_a_comandos_impresion(self):
         consumer = self.pulsar_client.subscribe(
@@ -48,11 +55,18 @@ class ConsumidorComandos:
             handler = RegistrarImpresionHandler()
             impresion = handler.handle(comando)
             
-            # Persistir
+            # Persistir en repositorio tradicional (para compatibilidad)
             self.repo_impresiones.agregar(impresion)
             
+            # Nueva topología: Guardar en Event Store
+            evento = handler.eventos[0]
+            self.event_store_repo.save_impresion(impresion.id, evento)
+            
+            # Ejecutar proyecciones para actualizar read models
+            self.projection_manager.handle_event(evento)
+            
             # Publicar evento
-            self._publicar_evento_impresion(handler.eventos[0])
+            self._publicar_evento_impresion(evento)
             
             consumer.acknowledge(mensaje)
 
@@ -87,11 +101,18 @@ class ConsumidorComandos:
             handler = RegistrarConversionHandler()
             conversion = handler.handle(comando)
             
-            # Persistir
+            # Persistir en repositorio tradicional (para compatibilidad)
             self.repo_conversiones.agregar(conversion)
             
+            # Nueva topología: Guardar en Event Store
+            evento = handler.eventos[0]
+            self.event_store_repo.save_conversion(conversion.id, evento)
+            
+            # Ejecutar proyecciones para actualizar read models
+            self.projection_manager.handle_event(evento)
+            
             # Publicar evento
-            self._publicar_evento_conversion(handler.eventos[0])
+            self._publicar_evento_conversion(evento)
             
             consumer.acknowledge(mensaje)
 
