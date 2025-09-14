@@ -6,10 +6,8 @@ from datetime import datetime
 @dataclass
 class EventoDominio(ABC):
     """Clase base para eventos de dominio"""
-    fecha_creacion: datetime = None
-    
     def __post_init__(self):
-        if self.fecha_creacion is None:
+        if not hasattr(self, 'fecha_creacion') or self.fecha_creacion is None:
             self.fecha_creacion = datetime.now()
 
 
