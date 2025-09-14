@@ -11,6 +11,15 @@ services:
     depends_on:
       - pulsar
 
+  tracking-consumer:
+    build: .
+    container_name: tracking-consumer
+    command: python -m alpespartners.modulos.tracking.infraestructura.consumidores
+    environment:
+      - BROKER_HOST=pulsar
+    depends_on:
+      - pulsar
+
   pulsar:
     image: apachepulsar/pulsar:latest
     container_name: pulsar
