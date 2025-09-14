@@ -1,11 +1,12 @@
-from alpespartners.seedwork.aplicacion.mapeadores import Mapeador
+from alpespartners.seedwork.aplicacion.dto import Mapeador as AppMap
+from alpespartners.seedwork.dominio.repositorios import Mapeador as RepMap
 from alpespartners.modulos.tracking.aplicacion.dto import ImpresionDTO, ConversionDTO
 from alpespartners.modulos.tracking.dominio.entidades import Impresion, Conversion
 from alpespartners.modulos.tracking.dominio.objetos_valor import Metadatos, UserAgent, IPAddress, Referrer, TipoConversion, ValorConversion
 from datetime import datetime
 
 
-class MapeadorImpresion(Mapeador):
+class MapeadorImpresion(RepMap):
     def entidad_a_dto(self, entidad: Impresion) -> ImpresionDTO:
         return ImpresionDTO(
             id=entidad.id,
@@ -38,7 +39,7 @@ class MapeadorImpresion(Mapeador):
         )
 
 
-class MapeadorConversion(Mapeador):
+class MapeadorConversion(RepMap):
     def entidad_a_dto(self, entidad: Conversion) -> ConversionDTO:
         return ConversionDTO(
             id=entidad.id,
@@ -76,7 +77,7 @@ class MapeadorConversion(Mapeador):
         )
 
 
-class MapeadorImpresionDTOJson(Mapeador):
+class MapeadorImpresionDTOJson(AppMap):
     def externo_a_dto(self, externo: dict) -> ImpresionDTO:
         return ImpresionDTO(
             id=externo.get('id', ''),
@@ -90,8 +91,11 @@ class MapeadorImpresionDTOJson(Mapeador):
             timestamp=externo.get('timestamp', datetime.now().isoformat())
         )
 
+    def dto_a_externo(self, dto: ImpresionDTO) -> dict:
+        return dto.__dict__
 
-class MapeadorConversionDTOJson(Mapeador):
+
+class MapeadorConversionDTOJson(AppMap):
     def externo_a_dto(self, externo: dict) -> ConversionDTO:
         return ConversionDTO(
             id=externo.get('id', ''),
@@ -106,3 +110,6 @@ class MapeadorConversionDTOJson(Mapeador):
             referrer=externo.get('referrer', ''),
             timestamp=externo.get('timestamp', datetime.now().isoformat())
         )
+
+    def dto_a_externo(self, dto: ConversionDTO) -> dict:
+        return dto.__dict__

@@ -3,7 +3,7 @@ import os
 from pulsar.schema import *
 from alpespartners.modulos.tracking.infraestructura.schema.v1.comandos import ComandoRegistrarImpresion, ComandoRegistrarConversion
 from alpespartners.modulos.tracking.infraestructura.schema.v1.eventos import EventoImpresionRegistrada, EventoConversionRegistrada
-from alpespartners.seedwork.infraestructura.utils import millis_a_datetime
+from alpespartners.seedwork.infraestructura.utils import time_millis
 from datetime import datetime
 import uuid
 
