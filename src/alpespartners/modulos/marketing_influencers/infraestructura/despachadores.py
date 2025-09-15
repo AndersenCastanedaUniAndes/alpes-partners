@@ -25,7 +25,15 @@ class Despachador:
     def publicar_evento(self, evento, topico):
         payload = self.to_payload(CampañaCreadaPayload, evento)
 
-        evento_integracion = EventoCampañaCreada(data=payload)
+        evento_integracion = EventoCampañaCreada(
+            id=str(utils.time_millis()),
+            time=int(utils.time_millis()),
+            specversion="1.0",
+            type="campaña-creada",
+            datacontenttype="avro/binary",
+            service_name=utils.service_name(),
+            data=payload,
+        )
         self._publicar_mensaje(evento_integracion, topico, AvroSchema(EventoCampañaCreada))
 
 
@@ -34,7 +42,15 @@ class Despachador:
             'fecha_creacion': int(unix_time_millis(datetime.now()))
         })
 
-        comando_integracion = ComandoCrearCampaña(data=payload)
+        comando_integracion = ComandoCrearCampaña(
+            id=str(utils.time_millis()),
+            time=int(utils.time_millis()),
+            specversion="1.0",
+            type="crear-campaña",
+            datacontenttype="avro/binary",
+            service_name=utils.service_name(),
+            data=payload,
+        )
         self._publicar_mensaje(comando_integracion, topico, AvroSchema(ComandoCrearCampaña))
 
 

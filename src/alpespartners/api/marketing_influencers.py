@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Response
 import json
 
 from alpespartners.config.db import get_session
-from alpespartners.modulos.marketing_influencers.aplicacion.comandos.crear_campaña import CrearCampaña
 from alpespartners.modulos.marketing_influencers.aplicacion.mapeadores import MapeadorCampañaDTOJson
 from alpespartners.modulos.marketing_influencers.infraestructura.despachadores import Despachador
 from alpespartners.seedwork.dominio.excepciones import ExcepcionDominio
@@ -17,22 +16,16 @@ async def health_check():
 
 
 @router.post("/campañas")
-async def crear_campaña(campaña_dict: dict, session=Depends(get_session)):
+async def crear_campaña(campaña_dict: dict):
+    print(f'Recibido para creación: {campaña_dict}')
     try:
         map_campaña = MapeadorCampañaDTOJson()
         campaña_dto = map_campaña.externo_a_dto(campaña_dict)
 
-        comando = CrearCampaña(
-            id=campaña_dto.id,
-            nombre=campaña_dto.nombre,
-            producto=campaña_dto.producto,
-            presupuesto=campaña_dto.presupuesto,
-            moneda=campaña_dto.moneda,
-            marca=campaña_dto.marca
-        )
-
+        # Publicar en el tópico de comandos para que lo consuma el microservicio
         despachador = Despachador()
-        despachador.publicar_comando(comando, "crear-campaña")
+        # Enviamos el DTO directamente como "comando" (el despachador extrae los campos necesarios)
+        despachador.publicar_comando(campaña_dto, 'comandos-campaña')
 
         return Response(json.dumps({'status': 'EN_QUEUED'}), status_code=202, media_type='application/json')
     except ExcepcionDominio as e:

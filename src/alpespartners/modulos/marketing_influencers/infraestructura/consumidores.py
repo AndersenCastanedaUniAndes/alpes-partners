@@ -3,10 +3,11 @@ from pulsar.schema import *
 import logging
 import traceback
 
-from alpespartners.modulos.marketing_influencers.infraestructura.schema.v1.eventos import EventoCampañaCreada
+from alpespartners.modulos.marketing_influencers.infraestructura.schema.v1.eventos import EventoCampañaCreada, CampañaCreadaPayload
 from alpespartners.modulos.marketing_influencers.infraestructura.schema.v1.comandos import ComandoCrearCampaña
 from alpespartners.seedwork.infraestructura import utils
 from pulsar import Consumer
+from alpespartners.modulos.marketing_influencers.infraestructura.despachadores import Despachador
 
 def suscribirse_a_eventos():
     cliente: Consumer = None
@@ -35,7 +36,23 @@ def suscribirse_a_comandos():
 
         while True:
             mensaje = consumidor.receive()
-            print(f'Comando recibido: {mensaje.value().data}')
+            data = mensaje.value().data
+            print(f'Comando recibido: {data}')
+
+            # Publicar evento simple a "eventos-campaña" tras recibir el comando
+            class _Evento:
+                def __init__(self, id: str):
+                    self.id = id
+
+            try:
+                campañaCreada = EventoCampañaCreada()
+                campañaCreada.data = CampañaCreadaPayload()
+                campañaCreada.data.id = data.id
+                Despachador().publicar_evento(campañaCreada, 'campaña-creada')
+                print(f'Evento enviado a campaña-creada: {{"id": "{data.id}"}}')
+            except Exception:
+                logging.error('ERROR: Publicando evento a campaña-creada')
+                traceback.print_exc()
 
             consumidor.acknowledge(mensaje)     
             

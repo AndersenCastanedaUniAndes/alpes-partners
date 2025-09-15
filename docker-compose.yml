@@ -1,15 +1,25 @@
 version: '3.9'
 
 services:
-  alpes-partners:
+  bff:
     build: .
-    container_name: alpes-partners
-    ports:
-      - "8000:8000"
+    container_name: alpes-bff
     environment:
       - BROKER_HOST=pulsar
     depends_on:
       - pulsar
+    ports:
+      - "8000:8000"
+    command: ["uvicorn", "alpespartners.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  marketing-influencers:
+    build: .
+    container_name: marketing-influencers
+    environment:
+      - BROKER_HOST=pulsar
+    depends_on:
+      - pulsar
+    command: ["python", "-m", "alpespartners.modulos.marketing_influencers.service"]
 
   tracking-consumer:
     build: .

@@ -39,6 +39,16 @@ class Campaña(Entidad):
 
 
 @dataclass
+class Contrato:
+    influencer_id: str
+    campaña_id: str
+    fecha_inicio: datetime
+    fecha_fin: datetime
+    términos: str
+    Pago: Monto
+
+
+@dataclass
 class Pago(Entidad):
     influencer_id: str
     campaña_id: str

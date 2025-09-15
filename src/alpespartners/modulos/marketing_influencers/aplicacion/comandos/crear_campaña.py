@@ -4,6 +4,7 @@ from alpespartners.modulos.marketing_influencers.dominio.entidades import Campa�
 from .base import CrearReservaBaseHandler
 from alpespartners.seedwork.aplicacion.comandos import ejecutar_comando as comando
 from alpespartners.modulos.marketing_influencers.aplicacion.mapeadores import MapeadorCampaña
+from alpespartners.modulos.marketing_influencers.infraestructura.repositorios import RepositorioCampañas
 
 
 @dataclass
@@ -33,6 +34,7 @@ class CrearCampañaHandler(CrearReservaBaseHandler):
         )
 
         campaña: Campaña = self.fabrica_campañas.crear_objeto(campaña_dto, MapeadorCampaña())
+        repositorio = self.fabrica_campaña.crear_objeto(RepositorioCampañas.__class__)
 
 
 @comando.register(CrearCampaña)
