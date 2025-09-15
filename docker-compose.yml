@@ -11,6 +11,30 @@ services:
     depends_on:
       - pulsar
 
+  tracking-consumer:
+    build: .
+    container_name: tracking-consumer
+    command: python -m alpespartners.modulos.tracking.infraestructura.consumidores_final
+    environment:
+      - BROKER_HOST=pulsar
+    depends_on:
+      - pulsar
+    volumes:
+      - ./data:/app/data
+
+  tracking-queries:
+    build: .
+    container_name: tracking-queries
+    command: uvicorn alpespartners.main:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+    environment:
+      - BROKER_HOST=pulsar
+    depends_on:
+      - pulsar
+    volumes:
+      - ./data:/app/data
+
   pulsar:
     image: apachepulsar/pulsar:latest
     container_name: pulsar
