@@ -25,8 +25,46 @@ src/alpespartners/
 			dominio/                    # Entidades, objetos de valor (de este módulo)
 			aplicacion/                 # DTOs, comandos, mapeadores, handlers
 			infraestructura/            # Repositorios, despachadores Pulsar, esquemas Avro
+		pagos/
+			dominio/
+			aplicacion/
+			infraestructura/
+		tracking/
+			dominio/
+			aplicacion/
+			infraestructura/
 	seedwork/                       # Elementos reutilizables transversales (DDD base)
 ```
+
+### Flujo
+![Flujo](flujo.png)
+
+1. Marketing de Influencers
+
+	Aquí se configura la campaña inicial:
+	- Crear Campaña: Se genera la campaña de marketing.
+	- Asignar comisiones: Se definen las condiciones de pago (ejemplo: por impresión, clic o venta).
+	- Agrega los influencers: Se suman los influencers que participarán en la campaña.
+	- Resultado: Campaña Creada (listo para ejecutarse).
+
+2. Tracking (Seguimiento)
+
+	Se registra la interacción de los usuarios con la campaña:
+	- Registrar impresión: Cuando un usuario ve el contenido del influencer.
+	- Impresión registrada: Confirmación de que el sistema contabilizó esa visualización.
+	- Registrar conversión: Cuando un usuario realiza la acción deseada (ejemplo: compra, registro).
+	- Conversión registrada: Confirmación de que esa acción se registró exitosamente.
+
+3. Pagos
+
+	Una vez registradas las conversiones, se gestiona la parte financiera:
+	- Calcular comisión: Se determina cuánto gana el influencer por las conversiones.
+	- Comisión calculada: El monto queda definido.
+	- Programar pago: Se agenda el pago correspondiente.
+	- Pago realizado: El influencer recibe su dinero.
+
+### Prubas iniciales
+![tracking](tracking.png)
 
 ### 4. Capas y Seedwork
 | Capa | Rol | Ejemplos |
