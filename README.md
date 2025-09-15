@@ -37,7 +37,7 @@ src/alpespartners/
 ```
 
 ### Flujo
-![Flujo](flujo.png)
+![Transacción](transaccion.png)
 
 1. Marketing de Influencers
 
@@ -64,7 +64,9 @@ src/alpespartners/
 	- Pago realizado: El influencer recibe su dinero.
 
 ### Prubas iniciales
-![tracking](tracking.png)
+![tracking](tracking1.png)
+![tracking](tracking2.png)
+![tracking](tracking3.png)
 
 ### 4. Capas y Seedwork
 | Capa | Rol | Ejemplos |
