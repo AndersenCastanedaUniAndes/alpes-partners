@@ -4,13 +4,13 @@ from alpespartners.modulos.marketing_influencers.dominio.fabricas import Fabrica
 
 class CrearReservaBaseHandler(ComandoHandler):
     def __init__(self):
-        self.fabrica_repositorio = FabricaRepositorio()
-        self.fabrica_campañas = FabricaMarketingDeInfluencers()
+        self._fabrica_repositorio: FabricaRepositorio = FabricaRepositorio()
+        self._fabrica_campañas: FabricaMarketingDeInfluencers = FabricaMarketingDeInfluencers()
 
     @property
     def fabrica_repositorio(self):
-        return self.fabrica_repositorio
+        return self._fabrica_repositorio
 
     @property
-    def fabrica_campaña(self):
-        return self.fabrica_campañas
+    def fabrica_campañas(self):
+        return self._fabrica_campañas

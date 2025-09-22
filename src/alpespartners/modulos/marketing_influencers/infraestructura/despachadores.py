@@ -23,6 +23,7 @@ class Despachador:
 
 
     def publicar_evento(self, evento, topico):
+        print(f'Publicando evento a {topico}: {evento}')
         payload = self.to_payload(CampañaCreadaPayload, evento)
 
         evento_integracion = EventoCampañaCreada(
@@ -34,15 +35,16 @@ class Despachador:
             service_name=utils.service_name(),
             data=payload,
         )
+
         self._publicar_mensaje(evento_integracion, topico, AvroSchema(EventoCampañaCreada))
 
 
-    def publicar_comando(self, comando, topico):
-        payload = self.to_payload(ComandoCrearCampañaPayload, comando, extra={
+    def publicar_comando(self, dto, topico):
+        payload = self.to_payload(ComandoCrearCampañaPayload, dto, extra={
             'fecha_creacion': int(unix_time_millis(datetime.now()))
         })
 
-        comando_integracion = ComandoCrearCampaña(
+        comando = ComandoCrearCampaña(
             id=str(utils.time_millis()),
             time=int(utils.time_millis()),
             specversion="1.0",
@@ -51,15 +53,17 @@ class Despachador:
             service_name=utils.service_name(),
             data=payload,
         )
-        self._publicar_mensaje(comando_integracion, topico, AvroSchema(ComandoCrearCampaña))
+
+        self._publicar_mensaje(comando, topico, AvroSchema(ComandoCrearCampaña))
 
 
     def to_payload(self, payload_cls, source_obj, extra: dict = None):
         data = {}
-        for field in payload_cls.__annotations__.keys():
+        for field in payload_cls.__dict__.keys():
             if hasattr(source_obj, field):
                 data[field] = getattr(source_obj, field)
         if extra:
             data.update(extra)
+
         return payload_cls(**data)
 
