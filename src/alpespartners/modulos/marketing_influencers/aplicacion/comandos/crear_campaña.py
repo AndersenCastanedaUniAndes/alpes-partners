@@ -1,10 +1,9 @@
 from dataclasses import dataclass, field
+from alpespartners.modulos.marketing_influencers.aplicacion.dto import CampañaDTO
 from alpespartners.seedwork.aplicacion.comandos import Comando
-from alpespartners.modulos.marketing_influencers.dominio.entidades import Campaña
 from .base import CrearReservaBaseHandler
 from alpespartners.seedwork.aplicacion.comandos import ejecutar_comando as comando
-from alpespartners.modulos.marketing_influencers.aplicacion.mapeadores import MapeadorCampaña
-from alpespartners.modulos.marketing_influencers.infraestructura.repositorios import RepositorioCampañas
+from alpespartners.modulos.marketing_influencers.infraestructura.repositorios import RepositorioCampañasDB
 
 
 @dataclass
@@ -20,21 +19,20 @@ class CrearCampaña(Comando):
 
 
 class CrearCampañaHandler(CrearReservaBaseHandler):
-    def __init__(self, event_bus):
-        self.event_bus = event_bus
-
-    async def handle(self, comando: CrearCampaña):
-        campaña_dto = Campaña(
+    def handle(self, comando: CrearCampaña):
+        campaña_dto = CampañaDTO(
             id=comando.id,
             nombre=comando.nombre,
             producto=comando.producto,
             presupuesto=comando.presupuesto,
             moneda=comando.moneda,
-            marca=comando.marca
+            marca=comando.marca,
+            influencers_ids=comando.influencers_ids,
+            conversiones=comando.conversiones
         )
 
-        campaña: Campaña = self.fabrica_campañas.crear_objeto(campaña_dto, MapeadorCampaña())
-        repositorio = self.fabrica_campaña.crear_objeto(RepositorioCampañas.__class__)
+        repositorio = RepositorioCampañasDB()
+        repositorio.agregar(campaña_dto)
 
 
 @comando.register(CrearCampaña)

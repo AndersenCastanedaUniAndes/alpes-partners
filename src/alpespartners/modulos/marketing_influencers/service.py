@@ -1,6 +1,7 @@
 import threading
 import time
 
+from alpespartners.modulos.marketing_influencers.infraestructura.db.init_db import init_db
 from alpespartners.modulos.marketing_influencers.infraestructura.consumidores import (
     suscribirse_a_comandos,
     suscribirse_a_eventos,
@@ -14,6 +15,8 @@ def _run(target):
 
 
 def main():
+    init_db()
+
     # Run both consumers so we can see event flow in logs
     threads = [
         _run(suscribirse_a_comandos),
